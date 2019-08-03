@@ -6,6 +6,7 @@ import setup
 import config
 import time
 import locale.en as locale
+import parallel
 
 options = None
 
@@ -31,11 +32,11 @@ def run():
 
     # --devices
     if options.want_list_devices:
-        device.available_devices()
+        device.print_available_devices()
         sys.exit(0)
 
     if options.want_my_devices:
-        device.my_devices()
+        device.print_my_devices()
         sys.exit(0)
 
     # --connect or --disconnect
@@ -65,11 +66,9 @@ def run():
     if not options.test_suite is None :
         device_selected = list()
         parallel_run = False
-        if not options.parallel_number is None :
-            devices_selected = device.auto_choose_device(n=options.parallel_number)
-        elif not options.parallel_os is None :
-            parallel_os = options.parallel_os.split(',')
-            devices_selected = device.auto_choose_device(os_versions=parallel_os)
+        if not options.parallel_type is None :
+            parallel_execution = parallel.ParallelExecution(options.parallel_type, options.parallel_specs)
+            devices_selected = device.auto_choose_device(parallel_execution)
         elif not options.device_id is None :
             device.check_connected_devices()
             device_ids = options.device_id.split(',')

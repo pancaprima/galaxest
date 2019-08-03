@@ -15,14 +15,8 @@ def init_stf():
 if "stf" in config.data and config.data.stf:
     init_stf()
 
-
 def get_devices():
-    available_devices = stf_api.get_devices()
-    if len(available_devices) > 0:
-        for device in available_devices:
-            device_name = "%s(%s)" % (
-                device["manufacturer"].strip(), device["model"].strip())
-            print "%-20s\t%-10s\t%s" % (device_name, device['version'], device["serial"])
+    return stf_api.get_devices()
 
 def get_disconnected_devices():
     list_disconnected = []
@@ -36,6 +30,14 @@ def get_disconnected_devices():
         if not still_connected :
             list_disconnected.append(device_connected.serial)
     return list_disconnected
+
+def print_devices():
+    available_devices = get_devices()
+    if len(available_devices) > 0:
+        for device in available_devices:
+            device_name = "%s(%s)" % (
+                device["manufacturer"].strip(), device["model"].strip())
+            print "%-20s\t%-10s\t%s" % (device_name, device['version'], device["serial"])  
 
 
 class Stf(object):

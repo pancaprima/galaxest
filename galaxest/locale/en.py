@@ -34,6 +34,7 @@ ERROR_STF_CONFIG = "Something wrong with the OpenSTF configuration. Please check
 ERROR_STF_FETCH_DEVICES = "failed to get list of devices"
 ERROR_STF_STOP_DEVICE = "failed to stop use the device"
 ERROR_STF_USE_DEVICE = "failed to use the device"
+ERROR_CHOOSE_PARALLEL_TYPE = "Please choose only one type of parallel execution"
 
 #INFO
 INFO_SETUP_FIRST = "Hi! This is your first time exploring galaxest."
