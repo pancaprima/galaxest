@@ -1,0 +1,1 @@
+KEY_FRAMEWORK_KATALON = "Katalon"
