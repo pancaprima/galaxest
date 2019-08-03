@@ -1,6 +1,7 @@
 from optparse import OptionParser
 from parallel import ParallelType
 import locale.en as locale
+import sys
 
 def parse_options():
     """
@@ -22,7 +23,6 @@ def parse_options():
 
     parser.add_option(
         '-c','--connect',
-        action='store_true',
         dest='want_connect',
         default=False,
         help=locale.HELP_CONNECT
@@ -30,7 +30,6 @@ def parse_options():
 
     parser.add_option(
         '-d','--disconnect',
-        action='store_true',
         dest='want_disconnect',
         default=False,
         help=locale.HELP_DISCONNECT
@@ -117,8 +116,19 @@ def parse_options():
     return parser, opts, args
 
 def _check_conflicted_opts(opts) :
-    if opts.want_connect and opts.want_disconnect:
+    conflict = False
+
+    if opts.want_connect != False and not opts.want_disconnect != False :
         print locale.ERROR_CD_TOGETHER
+        conflict = True
+    
+    if opts.want_connect is None and opts.any_device == False :
+        print locale.ERROR_CONNECT_NO_ID
+        conflict = True
+
+    if opts.want_disconnect is None and opts.local_id is None :
+        print locale.ERROR_DISCONNECT_NO_ID
+        conflict = True
     
     parallel_request = 0
     opts.parallel_type = None
@@ -134,5 +144,9 @@ def _check_conflicted_opts(opts) :
     
     if parallel_request > 1 :
         print locale.ERROR_CHOOSE_PARALLEL_TYPE
+        conflict = True
     
+    if conflict :
+        sys.exit(0)
+
     return opts

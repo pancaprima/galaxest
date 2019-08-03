@@ -61,9 +61,32 @@ def check_connected_devices():
     for serial in list_disconnected:
         del config.data.devices_connected[serial]
 
-def auto_choose_device(parallel_data):
+def find_devices_to_run(parallel_type, parallel_specs, device_id):
+    devices_selected = list()
+    if not parallel_type is None :
+        parallel_execution = parallel.ParallelExecution(parallel_type, parallel_specs)
+        devices_selected = auto_choose_device(parallel_execution)
+    elif not device_id is None :
+        check_connected_devices()
+        device_ids = device_id.split(',')
+        for device_id in device_ids :
+            if device_id in config.data.devices_connected :
+                desired_device = config.data.devices_connected[device_id]   
+            else :
+                desired_device = connect(init(device_id))
+            if not automation.is_using_device(desired_device.adb_id):
+                devices_selected.append(desired_device)
+            if devices_selected is None :
+                print locale.ERROR_CONNECT_DEVICE
+    else :
+        any_spec = parallel.ParallelExecution(parallel.ParallelType.AMOUNT, 1)
+        devices_selected = auto_choose_device(any_spec)
+    return devices_selected
+
+def auto_choose_device(parallel_data, use_connected_devices=True):
     devices_selected = []
-    devices_selected = _use_connected_devices(parallel_data, devices_selected)
+    if use_connected_devices :
+        devices_selected = _use_connected_devices(parallel_data, devices_selected)
     devices_selected = _use_available_devices(parallel_data, devices_selected)
     return devices_selected
 

@@ -20,7 +20,9 @@ SUCCESS_DEVICE_DISCONNECT = "device successfully disconnected from your machine"
 
 #ERROR
 ERROR_CD_TOGETHER = "Can't connect and disconnect at one time. Please choose one."
-ERROR_CD_NO_ID = "galaxest doesn't see this device connected. You can specify with --local-id to force disconnect it from your adb."
+ERROR_DISCONNECT_NO_ID = "Can't find device to be disconnected. Please specify the device's serial, or use --local-id <adb_device_id> to disconnect."
+ERROR_CONNECT_NO_ID = "Can't find device to be connected. Please specify the device's serial, or use --any-device to connect to any available device."
+ERROR_DISCONNECT_ID_NOT_FOUND = "galaxest doesn't see this device connected. You can specify with --local-id to force disconnect it from your adb."
 ERROR_CONNECT_DEVICE = "Can't connect to the desired device. You can try with another device."
 ERROR_DEVICE_BUSY = "Device is currently running another automation. Please re-run after it finish or choose another device."
 ERROR_DEVICE_UNAVAILABLE = "The desired device is currently unavailable. You can see available devices by run 'galaxest --devices'"
