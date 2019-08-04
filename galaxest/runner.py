@@ -41,7 +41,7 @@ def run():
 
     # --connect
     if options.want_connect != False :
-        if options.any_device :
+        if options.want_connect == True :
             any_spec = parallel.ParallelExecution(parallel.ParallelType.AMOUNT, 1)
             devices_selected = device.auto_choose_device(any_spec, False)
         else :
@@ -50,6 +50,7 @@ def run():
 
     # --disconnect
     if options.want_disconnect != False :
+        desired_device = device.init(options.want_disconnect)
         if not options.local_id is None :
             desired_device.remote_url = options.local_id
             desired_device.disconnect()

@@ -23,6 +23,7 @@ def parse_options():
 
     parser.add_option(
         '-c','--connect',
+        action='store_true',
         dest='want_connect',
         default=False,
         help=locale.HELP_CONNECT
@@ -73,14 +74,6 @@ def parse_options():
     )
 
     parser.add_option(
-        '--any-device',
-        action='store_true',
-        dest='any_device',
-        default=False,
-        help=locale.HELP_ANY_DEVICE
-    )
-
-    parser.add_option(
         '-i','--my-devices',
         action='store_true',
         dest='want_my_devices',
@@ -118,12 +111,8 @@ def parse_options():
 def _check_conflicted_opts(opts) :
     conflict = False
 
-    if opts.want_connect != False and not opts.want_disconnect != False :
+    if opts.want_connect != False and opts.want_disconnect != False :
         print locale.ERROR_CD_TOGETHER
-        conflict = True
-    
-    if opts.want_connect is None and opts.any_device == False :
-        print locale.ERROR_CONNECT_NO_ID
         conflict = True
 
     if opts.want_disconnect is None and opts.local_id is None :

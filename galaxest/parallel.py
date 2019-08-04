@@ -15,6 +15,10 @@ class ParallelExecution(object):
 
     def set_parallel_type(self, val):
         self.type_val = val
+    
+    def remove_spec(self, spec):
+        if spec in self.specs:
+            self.specs.remove(spec)
 
     def parse_specs(self, val):
         self.specs = []

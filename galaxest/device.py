@@ -100,8 +100,9 @@ def _is_device_spec_match(parallel_data, desired_device):
     spec = None
     if parallel_data.type_val == ParallelType.OS :
         spec_match = False
-        for spec in parallel_data.specs :
-            if desired_device.version.startswith(spec) :
+        for i_spec in parallel_data.specs :
+            if desired_device.version.startswith(i_spec) :
+                spec = i_spec
                 spec_match = True
     return spec_match, spec
 
@@ -113,7 +114,7 @@ def _use_connected_devices(parallel_data, devices_selected=[]):
                 device_connected = config.data.devices_connected[key]
                 spec_match, spec = _is_device_spec_match(parallel_data, device_connected) 
                 if spec_match and _is_connected_device_usable(device_connected):
-                    parallel_data.specs.remove(spec)
+                    parallel_data.remove_spec(spec)
                     devices_selected.append(device_connected)
             else : break
     return devices_selected
@@ -133,7 +134,7 @@ def _use_available_devices(parallel_data, devices_selected=[]):
                     if spec_match and desired_device.is_available():
                         connected_device = connect(desired_device)
                         if not connected_device is None:
-                            parallel_data.specs.remove(spec)
+                            parallel_data.remove_spec(spec)
                             devices_selected.append(
                                 config.data.devices_connected[serial])
                             device_found = True
