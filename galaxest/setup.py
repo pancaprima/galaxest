@@ -20,17 +20,7 @@ def init():
     if reset_answers["ready"] == locale.INFO_NO:
         config.data.reset = False
         return False
-    framework_q_key = "framework"
-    framework_q = [
-        inquirer.List(framework_q_key,
-                      message=locale.INFO_SETUP_Q_TEST_FW,
-                      choices=[automations_key.KEY_FRAMEWORK_KATALON]
-                      )
-    ]
-    framework_answers = inquirer.prompt(framework_q)
-    config.data.framework = framework_answers[framework_q_key]
-    setup_status = setup_automation()
-
+    
     if setup_status:
         device_sources_q_key = "device_sources"
         device_sources_q = [
@@ -42,6 +32,18 @@ def init():
         device_sources_answers = inquirer.prompt(device_sources_q)
         config.data.device_sources = device_sources_answers[device_sources_q_key]
         setup_status = setup_device_sources()
+
+    if setup_status:
+        framework_q_key = "framework"
+        framework_q = [
+            inquirer.List(framework_q_key,
+                        message=locale.INFO_SETUP_Q_TEST_FW,
+                        choices=[automations_key.KEY_FRAMEWORK_KATALON]
+                        )
+        ]
+        framework_answers = inquirer.prompt(framework_q)
+        config.data.framework = framework_answers[framework_q_key]
+        setup_status = setup_automation()
 
     if setup_status:
         config.data.reset = False
@@ -59,11 +61,17 @@ def setup_katalon():
     setup_status = True
     init_katalon_q = [
         inquirer.Text('katalon_path',
-                      message=locale.INFO_SETUP_Q_KATALON_PATH),
+                      message=locale.INFO_SETUP_Q_KATALON_PATH,
+                      default=config.data.katalon_app if "katalon_app" in config.data else None
+                      ),
         inquirer.Text('project_path',
-                      message=locale.INFO_SETUP_Q_KATALON_PROJECT_PATH),
+                      message=locale.INFO_SETUP_Q_KATALON_PROJECT_PATH,
+                      default=config.data.katalon_project_path if "katalon_project_path" in config.data else None
+                      ),
         inquirer.Text('project_name',
-                      message=locale.INFO_SETUP_Q_KATALON_PROJECT_NAME)
+                      message=locale.INFO_SETUP_Q_KATALON_PROJECT_NAME,
+                      default=config.data.katalon_project_file if "katalon_project_file" in config.data else None
+                      )
     ]
     init_katalon_answers = inquirer.prompt(init_katalon_q)
     config.data.katalon_app = init_katalon_answers["katalon_path"] if not init_katalon_answers["katalon_path"].endswith(".app") else '%s/Contents/MacOS/katalon' % (init_katalon_answers["katalon_path"])
@@ -83,9 +91,13 @@ def setup_stf():
     setup_status = True
     init_stf_q = [
         inquirer.Text('host',
-                      message=locale.INFO_SETUP_Q_STF_HOST),
+                      message=locale.INFO_SETUP_Q_STF_HOST,
+                      default=config.data.stf_host if "stf_host" in config.data else None
+                      ),
         inquirer.Text('token',
-                      message=locale.INFO_SETUP_Q_STF_TOKEN),
+                      message=locale.INFO_SETUP_Q_STF_TOKEN,
+                      default=config.data.stf_token if "stf_token" in config.data else None
+                      ),
     ]
     init_stf_answers = inquirer.prompt(init_stf_q)
     config.data.stf_host = init_stf_answers["host"]
@@ -96,4 +108,5 @@ def setup_stf():
     if not stf.stf_api.healthy():
         print locale.ERROR_STF_TEST_CONN
         setup_status = False
+    print ""
     return setup_status

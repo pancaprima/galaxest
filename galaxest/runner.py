@@ -6,6 +6,7 @@ import setup
 import config
 import time
 import locale.en as locale
+import parallel
 
 options = None
 
@@ -31,88 +32,63 @@ def run():
 
     # --devices
     if options.want_list_devices:
-        device.available_devices()
+        device.print_available_devices()
         sys.exit(0)
 
     if options.want_my_devices:
-        device.my_devices()
+        device.print_my_devices()
         sys.exit(0)
 
-    # --connect or --disconnect
-    if options.want_connect or options.want_disconnect:
-        if options.want_connect and options.want_disconnect:
-            print locale.ERROR_CD_TOGETHER
-        else:
-            if not options.device_id is None:
-                desired_device = device.init(options.device_id)
-                if options.want_connect:
-                    device.connect(desired_device)
-                else:
-                    if options.device_id in config.data.devices_connected :
-                        desired_device.remote_url = config.data.devices_connected[options.device_id]["adb_id"]
-                        desired_device.disconnect()
-                        device.check_connected_devices()
-                    elif not options.local_id is None:
-                        desired_device.remote_url = options.local_id
-                        desired_device.disconnect()
-                        device.check_connected_devices()
-                    else:
-                        print locale.ERROR_CD_NO_ID
-            else:
-                print locale.HELP_DEVICE_ID
+    # --connect
+    if options.want_connect != False :
+        if options.want_connect == True :
+            any_spec = parallel.ParallelExecution(parallel.ParallelType.AMOUNT, 1)
+            devices_selected = device.auto_choose_device(any_spec, False)
+        else :
+            desired_device = device.init(options.want_connect)
+            device.connect(desired_device)
+
+    # --disconnect
+    if not options.device_id_to_disconnect is None :
+        if options.device_id_to_disconnect in config.data.devices_connected :
+            desired_device = device.init(options.device_id_to_disconnect)
+            desired_device.remote_url = config.data.devices_connected[options.device_id_to_disconnect]["adb_id"]
+            desired_device.disconnect()
+            device.check_connected_devices()
+        else :
+            print locale.ERROR_DISCONNECT_ID_NOT_FOUND
     
     # --run
     if not options.test_suite is None :
-        device_selected = list()
-        parallel_run = False
-        if not options.parallel_number is None :
-            devices_selected = device.auto_choose_device(n=options.parallel_number)
-        elif not options.parallel_os is None :
-            parallel_os = options.parallel_os.split(',')
-            devices_selected = device.auto_choose_device(os_versions=parallel_os)
-        elif not options.device_id is None :
-            device.check_connected_devices()
-            device_ids = options.device_id.split(',')
-            for device_id in device_ids :
-                if options.device_id in config.data.devices_connected :
-                    devices_selected.append(config.data.devices_connected[options.device_id])
-                else :
-                    desired_device = device.init(options.device_id)
-                    devices_selected.append(device.connect(desired_device))
-                if device_selected is None :
-                    print locale.ERROR_CONNECT_DEVICE
-        elif options.any_device is True or options.local_id is None :
-            devices_selected = device.auto_choose_device(n=1)
- 
-        if len(devices_selected) > 1 :
-            parallel_run = True
-            adb_ids = list()
-            for ds in devices_selected :
-                adb_ids.append(ds.adb_id)
-            options.local_id = ','.join(adb_ids)
-        elif len(devices_selected) == 1:
-            options.local_id =  devices_selected[0].adb_id
-
-        if not options.local_id is None :
-            if not automation.is_using_device(options.local_id) :
-                automation.run(options.test_suite, options.local_id, options.opts, parallel_run)
-                # Disconnect if automation finish
-                automation_finish = False
-                time.sleep(10)
-                while not automation_finish:
-                    automation_finish = True
-                    for ds in devices_selected:
-                        if not 'being_used' in ds :
-                            ds.being_used = True
-                        if ds.being_used :
-                            ds.being_used = automation.is_using_device(ds.adb_id)
-                            automation_finish = automation_finish and not ds.being_used
-                            if not ds.being_used :
-                                device.init(ds.serial).disconnect()
-                                device.check_connected_devices()
-                    if not automation_finish :
-                        time.sleep(30)
-            else :
-                print locale.ERROR_DEVICE_BUSY
+        devices_selected = list()
+        devices_selected = device.find_devices_to_run(options.parallel_type, options.parallel_specs, options.device_id)
+        adb_ids = _populate_adb_ids(devices_selected)
+        if not adb_ids is None :
+            automation.run(options.test_suite, adb_ids, options.opts)
+            _watch_to_disconnect(devices_selected)
         else :
             print locale.ERROR_DEVICE_NOT_FOUND
+
+def _watch_to_disconnect(devices_selected):
+    automation_finish = False
+    time.sleep(10)
+    while not automation_finish:
+        automation_finish = True
+        for ds in devices_selected:
+            if not 'being_used' in ds :
+                ds.being_used = True
+            if ds.being_used :
+                ds.being_used = automation.is_using_device(ds.adb_id)
+                automation_finish = automation_finish and not ds.being_used
+                if not ds.being_used :
+                    device.init(ds.serial).disconnect()
+                    device.check_connected_devices()
+        if not automation_finish :
+            time.sleep(30)
+
+def _populate_adb_ids(devices_selected):
+    adb_ids = list()
+    for ds in devices_selected :
+        adb_ids.append(ds.adb_id)
+    return adb_ids
+
