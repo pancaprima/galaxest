@@ -31,23 +31,9 @@ def parse_options():
 
     parser.add_option(
         '-d','--disconnect',
-        dest='want_disconnect',
-        default=False,
+        dest='device_id_to_disconnect',
+        default=None,
         help=locale.HELP_DISCONNECT
-    )
-
-    parser.add_option(
-        '--device-id',
-        dest='device_id',
-        default=None,
-        help=locale.HELP_DEVICE_ID
-    )
-
-    parser.add_option(
-        '--local-id',
-        dest='local_id',
-        default=None,
-        help=locale.HELP_LOCAL_ID
     )
 
     parser.add_option(
@@ -111,12 +97,8 @@ def parse_options():
 def _check_conflicted_opts(opts) :
     conflict = False
 
-    if opts.want_connect != False and opts.want_disconnect != False :
+    if opts.want_connect != False and not opts.device_id_to_disconnect is None :
         print locale.ERROR_CD_TOGETHER
-        conflict = True
-
-    if opts.want_disconnect is None and opts.local_id is None :
-        print locale.ERROR_DISCONNECT_NO_ID
         conflict = True
     
     parallel_request = 0

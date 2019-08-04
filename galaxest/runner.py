@@ -49,14 +49,10 @@ def run():
             device.connect(desired_device)
 
     # --disconnect
-    if options.want_disconnect != False :
-        desired_device = device.init(options.want_disconnect)
-        if not options.local_id is None :
-            desired_device.remote_url = options.local_id
-            desired_device.disconnect()
-            device.check_connected_devices()
-        elif options.want_disconnect in config.data.devices_connected :
-            desired_device.remote_url = config.data.devices_connected[options.want_disconnect]["adb_id"]
+    if not options.device_id_to_disconnect is None :
+        if options.device_id_to_disconnect in config.data.devices_connected :
+            desired_device = device.init(options.device_id_to_disconnect)
+            desired_device.remote_url = config.data.devices_connected[options.device_id_to_disconnect]["adb_id"]
             desired_device.disconnect()
             device.check_connected_devices()
         else :
