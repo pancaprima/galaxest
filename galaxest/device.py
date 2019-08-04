@@ -61,23 +61,11 @@ def check_connected_devices():
     for serial in list_disconnected:
         del config.data.devices_connected[serial]
 
-def find_devices_to_run(parallel_type, parallel_specs, device_id):
+def find_devices_to_run(parallel_type, parallel_specs):
     devices_selected = list()
     if not parallel_type is None :
         parallel_execution = parallel.ParallelExecution(parallel_type, parallel_specs)
         devices_selected = auto_choose_device(parallel_execution)
-    elif not device_id is None :
-        check_connected_devices()
-        device_ids = device_id.split(',')
-        for device_id in device_ids :
-            if device_id in config.data.devices_connected :
-                desired_device = config.data.devices_connected[device_id]   
-            else :
-                desired_device = connect(init(device_id))
-            if not automation.is_using_device(desired_device.adb_id):
-                devices_selected.append(desired_device)
-            if devices_selected is None :
-                print locale.ERROR_CONNECT_DEVICE
     else :
         any_spec = parallel.ParallelExecution(parallel.ParallelType.AMOUNT, 1)
         devices_selected = auto_choose_device(any_spec)
@@ -98,13 +86,21 @@ def _is_connected_device_usable(device_connected):
 def _is_device_spec_match(parallel_data, desired_device):
     spec_match = True
     spec = None
-    if parallel_data.type_val == ParallelType.OS :
+    if parallel_data.type_val != ParallelType.AMOUNT :
         spec_match = False
         for i_spec in parallel_data.specs :
-            if desired_device.version.startswith(i_spec) :
+            if _is_spec_match(parallel_data.type_val, i_spec, desired_device) :
                 spec = i_spec
                 spec_match = True
     return spec_match, spec
+
+def _is_spec_match(parallel_type, spec, desired_device):
+    if parallel_type == ParallelType.OS and desired_device.version.startswith(spec) :
+        return True
+    elif parallel_type == ParallelType.DEVICE_ID and desired_device.serial == spec :
+        return True
+    return False
+        
 
 def _use_connected_devices(parallel_data, devices_selected=[]):
     check_connected_devices()

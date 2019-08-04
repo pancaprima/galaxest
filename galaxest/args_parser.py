@@ -75,17 +75,32 @@ def parse_options():
     )
 
     parser.add_option(
-        '--parallel-n',
+        '--by-id',
+        dest='parallel_id',
+        default=None,
+        help=locale.HELP_PARALLEL_ID
+    )
+
+    parser.add_option(
+        '--by-n',
         dest='parallel_number',
         default=None,
         help=locale.HELP_PARALLEL_N
     )
 
     parser.add_option(
-        '--parallel-os',
+        '--by-os',
         dest='parallel_os',
         default=None,
         help=locale.HELP_PARALLEL_OS
+    )
+
+    parser.add_option(
+        '--skip-disconnect',
+        action='store_true',
+        dest='skip_disconnect',
+        default=False,
+        help=locale.HELP_SKIP_DISCONNECT
     )
 
     # Finalize
@@ -112,6 +127,10 @@ def _check_conflicted_opts(opts) :
         parallel_request += 1
         opts.parallel_type = ParallelType.OS
         opts.parallel_specs = opts.parallel_os
+    if not opts.parallel_id is None :
+        parallel_request += 1
+        opts.parallel_type = ParallelType.DEVICE_ID
+        opts.parallel_specs = opts.parallel_id
     
     if parallel_request > 1 :
         print locale.ERROR_CHOOSE_PARALLEL_TYPE

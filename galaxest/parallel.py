@@ -3,6 +3,7 @@ import enum
 class ParallelType(enum.Enum): 
     AMOUNT = 0
     OS = 1
+    DEVICE_ID = 2
 
 class ParallelExecution(object):
 
@@ -25,7 +26,7 @@ class ParallelExecution(object):
         self.specs_amount = 1
         if self.type_val == ParallelType.AMOUNT :
             self.specs_amount = int(val)
-        elif self.type_val == ParallelType.OS :
+        else :
             self.specs = val.split(",")
             self.specs_amount = int(len(self.specs))
 

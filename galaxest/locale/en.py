@@ -7,8 +7,10 @@ HELP_SHOW_CONFIG = "Show your spaceship configurations"
 HELP_RUN = "Run a test from your automation framework"
 HELP_MY_DEVICES = "See devices from galaxest connected to this machine."
 HELP_OPTS = "Specify more arguments for your test run"
-HELP_PARALLEL_N = "Run the test parallelly by specifying desired amount of devices"
-HELP_PARALLEL_OS = "Run the test parallelly by specifying desired os versions"
+HELP_PARALLEL_N = "Run the test by specifying desired amount of devices"
+HELP_PARALLEL_OS = "Run the test by specifying desired os versions"
+HELP_PARALLEL_ID = "Run the test by specifying device ids"
+HELP_SKIP_DISCONNECT = "Skip auto disconnect device after test finished"
 
 #SUCCESS
 SUCCESS_SETUP = "Done! Your spaceship is ready to explore the galaxest"

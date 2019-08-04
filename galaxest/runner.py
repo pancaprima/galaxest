@@ -61,11 +61,12 @@ def run():
     # --run
     if not options.test_suite is None :
         devices_selected = list()
-        devices_selected = device.find_devices_to_run(options.parallel_type, options.parallel_specs, options.device_id)
+        devices_selected = device.find_devices_to_run(options.parallel_type, options.parallel_specs)
         adb_ids = _populate_adb_ids(devices_selected)
         if not adb_ids is None :
             automation.run(options.test_suite, adb_ids, options.opts)
-            _watch_to_disconnect(devices_selected)
+            if not options.skip_disconnect :
+                _watch_to_disconnect(devices_selected)
         else :
             print locale.ERROR_DEVICE_NOT_FOUND
 
