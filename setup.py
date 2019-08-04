@@ -22,7 +22,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=["requests","tweak", "inquirer"],
+    install_requires=["requests","tweak", "inquirer", "enum"],
     entry_points={
         'console_scripts': [
             'galaxest = galaxest.main:main',
