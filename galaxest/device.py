@@ -1,5 +1,5 @@
 import time
-import labs.const as labs_const
+import labs
 import config
 import automation
 import locale.en as locale
@@ -12,18 +12,11 @@ sources = config.data.device_sources if "device_sources" in config.data else Non
 
 def init(device_id):
     for source in sources:
-        if source == labs_const.KEY_DEVICELAB_OPENSTF:
+        if source == labs.KEY_DEVICELAB_OPENSTF:
             device = devices.stf.Stf(device_id)
             if device.is_exist():
                 return device
     return None
-
-def get_available_devices():
-    available_devices = []
-    for source in sources:
-        if source == labs_const.KEY_DEVICELAB_OPENSTF:
-            available_devices = available_devices + devices.stf.get_devices()
-    return available_devices
 
 def print_available_devices():
     print "[OpenSTF]"
@@ -31,7 +24,7 @@ def print_available_devices():
     devices.stf.print_devices()
 
 def print_my_devices():
-    check_connected_devices()
+    _check_connected_devices()
     devices = config.data.devices_connected
     print "%-10s\t%-20s\t%-10s\t%-20s\t%s" % (
         "[Source]", "[Device Name]", "[Version]", "[Device ID]", "[ADB ID]",)
@@ -53,13 +46,18 @@ def connect(device):
         print locale.ERROR_DEVICE_UNAVAILABLE
     return None
 
-def check_connected_devices():
+def disconnect(device_id):
+    device = init(device_id)
+    device.remote_url = config.data.devices_connected[device_id]["adb_id"]
+    device.disconnect()
+    _check_connected_devices()
+
+def get_available_devices():
+    available_devices = []
     for source in sources:
-        list_disconnected = []
-        if source == labs_const.KEY_DEVICELAB_OPENSTF:
-            list_disconnected = list_disconnected + devices.stf.get_disconnected_devices()
-    for serial in list_disconnected:
-        del config.data.devices_connected[serial]
+        if source == labs.KEY_DEVICELAB_OPENSTF:
+            available_devices = available_devices + devices.stf.get_devices()
+    return available_devices
 
 def find_devices_to_run(parallel_type, parallel_specs):
     devices_selected = list()
@@ -77,6 +75,14 @@ def auto_choose_device(parallel_data, use_connected_devices=True):
         devices_selected = _use_connected_devices(parallel_data, devices_selected)
     devices_selected = _use_available_devices(parallel_data, devices_selected)
     return devices_selected
+
+def _check_connected_devices():
+    for source in sources:
+        list_disconnected = []
+        if source == labs.KEY_DEVICELAB_OPENSTF:
+            list_disconnected = list_disconnected + devices.stf.get_disconnected_devices()
+    for serial in list_disconnected:
+        del config.data.devices_connected[serial]
 
 def _is_connected_device_usable(device_connected):
     if not automation.is_using_device(device_connected.adb_id):
@@ -103,7 +109,7 @@ def _is_spec_match(parallel_type, spec, desired_device):
         
 
 def _use_connected_devices(parallel_data, devices_selected=[]):
-    check_connected_devices()
+    _check_connected_devices()
     if len(config.data.devices_connected) > 0:
         for key in config.data.devices_connected:
             if len(devices_selected) < parallel_data.specs_amount:

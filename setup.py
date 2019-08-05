@@ -8,7 +8,7 @@ import ast
 
 setup(
     name='galaxest',
-    version='0.0.4',
+    version='0.0.5',
     description="Run test from anywhere to anywhere in the galaxy",
     author='Fernanda Panca Prima',
     author_email='pancaprima8@gmail.com',

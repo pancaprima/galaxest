@@ -1,6 +1,6 @@
 import galaxest.config as config
 import galaxest.adb as adb
-import galaxest.labs.const as labs_const
+import galaxest.labs as labs
 import galaxest.locale.en as locale
 from galaxest.labs.stf import Stf as StfApi
 
@@ -25,7 +25,7 @@ def get_disconnected_devices():
         still_connected = False
         device_connected = config.data.devices_connected[key]
         for user_device in user_devices : 
-            if user_device["serial"] == key or device_connected.source != labs_const.KEY_DEVICELAB_OPENSTF :
+            if user_device["serial"] == key or device_connected.source != labs.KEY_DEVICELAB_OPENSTF :
                 still_connected = True
         if not still_connected :
             list_disconnected.append(device_connected.serial)
@@ -42,7 +42,7 @@ def print_devices():
 
 class Stf(object):
     def __init__(self, serial):
-        self.source = labs_const.KEY_DEVICELAB_OPENSTF
+        self.source = labs.KEY_DEVICELAB_OPENSTF
         self.serial = serial
         self.remote_url = None
         res = stf_api.get_device(self.serial)
@@ -59,9 +59,10 @@ class Stf(object):
         if stf_api.user_use_device(self.serial):
             self.remote_url = stf_api.device_remote_connect(self.serial)
             if not self.remote_url is None:
-                adb.adb_connect(self.remote_url)
-                print "%s %s %s" % (
+                adb.connect(self.remote_url)
+                print "%s %s %s %s" % (
                     self.serial,
+                    self.name,
                     locale.SUCCESS_DEVICE_CONNECT,
                     self.remote_url)
                 return True
@@ -73,9 +74,9 @@ class Stf(object):
 
     def disconnect(self):
         print locale.INFO_DEVICE_DISCONNECTING
-        adb.adb_disconnect(self.remote_url)
+        adb.disconnect(self.remote_url)
         if stf_api.device_remote_disconnect(self.serial) and stf_api.user_stop_use_device(self.serial):
-            adb.adb_disconnect(self.remote_url)
+            adb.disconnect(self.remote_url)
             print locale.SUCCESS_DEVICE_DISCONNECT
             return True
         else:

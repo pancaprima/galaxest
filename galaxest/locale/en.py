@@ -14,7 +14,7 @@ HELP_SKIP_DISCONNECT = "Skip auto disconnect device after test finished"
 
 #SUCCESS
 SUCCESS_SETUP = "Done! Your spaceship is ready to explore the galaxest"
-SUCCESS_DEVICE_CONNECT = "successfully connected to your adb as "
+SUCCESS_DEVICE_CONNECT = "successfully connected to your adb as"
 SUCCESS_DEVICE_DISCONNECT = "device successfully disconnected from your machine"
 
 #ERROR
@@ -53,3 +53,4 @@ INFO_NO = "No"
 INFO_DEVICE_CONNECTING = "connecting the device..."
 INFO_DEVICE_DISCONNECTING = "disconnecting the device..."
 INFO_LOGGED_IN = "You are logged in as"
+INFO_KATALON_START = "Starting Katalon automation at"

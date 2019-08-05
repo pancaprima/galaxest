@@ -1,6 +1,6 @@
 import inquirer
-import labs.const as labs_key
-import automations.const as automations_key
+import labs
+import automations
 import devices.stf as stf
 import config
 import locale.en as locale
@@ -26,7 +26,7 @@ def init():
         device_sources_q = [
             inquirer.Checkbox(device_sources_q_key,
                               message=locale.INFO_SETUP_Q_DEVICE_FARM,
-                              choices=[labs_key.KEY_DEVICELAB_OPENSTF]
+                              choices=[labs.KEY_DEVICELAB_OPENSTF]
                               )
         ]
         device_sources_answers = inquirer.prompt(device_sources_q)
@@ -38,7 +38,7 @@ def init():
         framework_q = [
             inquirer.List(framework_q_key,
                         message=locale.INFO_SETUP_Q_TEST_FW,
-                        choices=[automations_key.KEY_FRAMEWORK_KATALON]
+                        choices=[automations.KEY_FRAMEWORK_KATALON]
                         )
         ]
         framework_answers = inquirer.prompt(framework_q)
@@ -53,7 +53,7 @@ def init():
 
 def setup_automation():
     setup_status = True
-    if config.data.framework == automations_key.KEY_FRAMEWORK_KATALON :
+    if config.data.framework == automations.KEY_FRAMEWORK_KATALON :
         setup_status = setup_katalon()
     return setup_status
 
@@ -83,7 +83,7 @@ def setup_katalon():
 def setup_device_sources():
     setup_status = True
     for source in config.data.device_sources:
-        if source == labs_key.KEY_DEVICELAB_OPENSTF:
+        if source == labs.KEY_DEVICELAB_OPENSTF:
             setup_status = setup_stf()
     return setup_status
 
