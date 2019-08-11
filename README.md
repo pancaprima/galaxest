@@ -46,7 +46,6 @@ There are some questions to make galaxest working perfectly with your Katalon.
 1. The Katalon Application Path
 2. Your Automation Project
 3. The project file
-4. 
 
 ## Features
 
@@ -56,13 +55,18 @@ galaxest --help
 ```
 
 ### Connect
+If you want to connect randomly to a device:
 ```
 galaxest -c
+```
+Or if you want to connect to a desired device:
+```
+galaxest -c <serial_id>
 ```
 
 ### Disconnect
 ```
-galaxest -d <device_id>
+galaxest -d <serial_id>
 ```
 
 ### Run a Test
