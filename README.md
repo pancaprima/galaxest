@@ -43,35 +43,71 @@ Next, You'll be asked to choose one automation tool that you use in your compute
 
 ### Katalon Automation Tool Setup
 There are some questions to make galaxest working perfectly with your Katalon.
-1. The Katalon Application Path
-2. Your Automation Project
-3. The project file
+1. **The Katalon Application Path.** You need to specify the absolute path to your katalon application. e.g: `/Applications/Katalon.app/Contents/MacOS/katalon`
+2. **Your Automation Project File.** You need to specify the absolute path to your automation project file. The file should be the one which has extension **.prj**. e.g: `/Users/your_username/your_dir/your_automation_project_name.prj`
 
 ## Features
 
-### Help
+### help
 ```
 galaxest --help
 ```
 
-### Connect
+### available devices
+```
+galaxest -l
+```
+
+### connect
 If you want to connect randomly to a device:
 ```
 galaxest -c
 ```
 Or if you want to connect to a desired device:
 ```
-galaxest -c <serial_id>
+galaxest -c desired_serial_id
 ```
 
-### Disconnect
+### disconnect
 ```
-galaxest -d <serial_id>
+galaxest -d desired_serial_id
 ```
 
-### Run a Test
+### my connected devices
 ```
-galaxest -r <test_suite_name> --by <parallel_type> --opts <additional run options>
+galaxest -i
+```
+
+### run a test
+#### simple test run
+You can run a test by simply use this command:
+```
+galaxest -r desired_test_suite_name
+```
+#### choose device to run test
+You can also specify the method to find the most suitable device to run test. We currently support find a device by the id `--by-id`, by the os`--by-os`, and by the amount `--by-n`.
+```
+galaxest -r desired_test_suite_name --by-id desired_serial_id
+```
+#### specify more run options
+You can also specify more options supported from the automation framework you are using by adding `--opts`.
+```
+galaxest -r <test_suite_name> --opts additional_run_options
+```
+#### run in parallel
+You can run your automation test in parallel by using `,` as delimiter between specs except for `--by-n`. e.g:
+```
+galaxest -r desired_test_suite_name --by-os 5,6,7
+```
+
+### show configuration
+```
+galaxest -p
+```
+
+### reset configuration
+```
+galaxest --reset-config
 ```
 
 ## License

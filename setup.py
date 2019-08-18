@@ -6,10 +6,17 @@ import os
 import re
 import ast
 
+# read the contents of your README file
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, 'README.md')) as f:
+    long_description = f.read()
+
 setup(
     name='galaxest',
-    version='0.0.5',
+    version='0.0.7',
     description="Run test from anywhere to anywhere in the galaxy",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Fernanda Panca Prima',
     author_email='pancaprima8@gmail.com',
     url='https://github.com/pancaprima/galaxest',

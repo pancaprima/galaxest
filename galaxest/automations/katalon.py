@@ -5,12 +5,11 @@ import galaxest.locale.en as locale
 
 class App (object) :
 
-    def __init__(self, app_path, project_path, project_file_name):
+    def __init__(self, app_path, project_path, project_file):
         self.app_name = "/katalon"
         self.app_path = app_path[:-len(self.app_name)] if app_path.endswith(self.app_name) else self.app_name
         self.project_path = project_path
-        self.project_file = "%s/%s" % (project_path, project_file_name)
-        self.project_file_name = project_file_name
+        self.project_file = project_file
 
 class Runner (object) :
 
@@ -42,8 +41,10 @@ class Runner (object) :
         return screen_file
 
     def create_katalon_runner(self, log_file):
-        command = './katalon --args -noSplash -runMode=console -consoleLog -projectPath="%s" -testSuitePath="Test Suites/%s" -deviceId="%s" -browserType="Android" %s %s ' % (
-            self.katalon.project_file, self.test_suite, self.device.adb_id, self.get_report_folder(), self.run_options)
+        command = './katalon --args -noSplash -runMode=console -consoleLog -testSuitePath="Test Suites/%s" -deviceId="%s" -browserType="Android" %s %s' % (
+            self.test_suite, self.device.adb_id, self.get_report_folder(), self.run_options)
+        if not '-projectPath=' in self.run_options :
+            command = "%s -projectPath=%s" % (command, self.katalon.project_file)
         command = '%s 2>&1 | tee "%s"' % (command, log_file)
         filename = "%s/katalon_runner" % (self.report_path)
         f = open(filename, 'w+')
