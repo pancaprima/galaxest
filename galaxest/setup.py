@@ -64,19 +64,15 @@ def setup_katalon():
                       message=locale.INFO_SETUP_Q_KATALON_PATH,
                       default=config.data.katalon_app if "katalon_app" in config.data else None
                       ),
-        inquirer.Text('project_path',
-                      message=locale.INFO_SETUP_Q_KATALON_PROJECT_PATH,
-                      default=config.data.katalon_project_path if "katalon_project_path" in config.data else None
-                      ),
-        inquirer.Text('project_name',
-                      message=locale.INFO_SETUP_Q_KATALON_PROJECT_NAME,
+        inquirer.Text('project_file',
+                      message=locale.INFO_SETUP_Q_KATALON_PROJECT_FILE,
                       default=config.data.katalon_project_file if "katalon_project_file" in config.data else None
                       )
     ]
     init_katalon_answers = inquirer.prompt(init_katalon_q)
-    config.data.katalon_app = init_katalon_answers["katalon_path"] if not init_katalon_answers["katalon_path"].endswith(".app") else '%s/Contents/MacOS/katalon' % (init_katalon_answers["katalon_path"])
-    config.data.katalon_project_path = init_katalon_answers["project_path"] if not init_katalon_answers["project_path"].endswith('/') else init_katalon_answers["project_path"][:-1]
-    config.data.katalon_project_file = init_katalon_answers["project_name"] if init_katalon_answers["project_name"].endswith(".prj") else '%s.prj' % (init_katalon_answers["project_name"])
+    config.data.katalon_app = init_katalon_answers["katalon_path"].strip() if not init_katalon_answers["katalon_path"].endswith(".app") else '%s/Contents/MacOS/katalon' % (init_katalon_answers["katalon_path"])
+    config.data.katalon_project_file = init_katalon_answers["project_file"].strip()
+    config.data.katalon_project_path = config.data.katalon_project_file.rsplit('/', 1)[0]
     config.data.katalon = True
     return setup_status
 
@@ -100,8 +96,8 @@ def setup_stf():
                       ),
     ]
     init_stf_answers = inquirer.prompt(init_stf_q)
-    config.data.stf_host = init_stf_answers["host"]
-    config.data.stf_token = init_stf_answers["token"]
+    config.data.stf_host = init_stf_answers["host"].strip()
+    config.data.stf_token = init_stf_answers["token"].strip()
     config.data.stf = True
     stf.init_stf()
     print locale.INFO_SETUP_STF_TEST_CONN
