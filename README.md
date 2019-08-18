@@ -48,17 +48,17 @@ There are some questions to make galaxest working perfectly with your Katalon.
 
 ## Features
 
-### Help
+### help
 ```
 galaxest --help
 ```
 
-### Available Devices
+### available devices
 ```
 galaxest -l
 ```
 
-### Connect
+### connect
 If you want to connect randomly to a device:
 ```
 galaxest -c
@@ -68,44 +68,44 @@ Or if you want to connect to a desired device:
 galaxest -c desired_serial_id
 ```
 
-### Disconnect
+### disconnect
 ```
 galaxest -d desired_serial_id
 ```
 
-### My Connected Devices
+### my connected devices
 ```
 galaxest -i
 ```
 
-### Run a Test
-1. Simple Run
+### run a test
+#### simple test run
 You can run a test by simply use this command:
 ```
 galaxest -r desired_test_suite_name
 ```
-2. Choose Device to Run Test
+#### choose device to run test
 You can also specify the method to find the most suitable device to run test. We currently support find a device by the id `--by-id`, by the os`--by-os`, and by the amount `--by-n`.
 ```
 galaxest -r desired_test_suite_name --by-id desired_serial_id
 ```
-3. Specify More Run Options
+#### specify more run options
 You can also specify more options supported from the automation framework you are using by adding `--opts`.
 ```
 galaxest -r <test_suite_name> --opts additional_run_options
 ```
-4. Run in Parallel
+#### run in parallel
 You can run your automation test in parallel by using `,` as delimiter between specs except for `--by-n`. e.g:
 ```
 galaxest -r desired_test_suite_name --by-os 5,6,7
 ```
 
-### Show Configuration
+### show configuration
 ```
 galaxest -p
 ```
 
-### Reset Configuration
+### reset configuration
 ```
 galaxest --reset-config
 ```
