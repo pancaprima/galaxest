@@ -23,7 +23,10 @@ def parse_options():
 
     parser.add_option(
         '-c','--connect',
-        action='store_true',
+        action="callback",
+        callback=optional_argument,
+        callback_args=(str, True),
+        nargs=0,
         dest='want_connect',
         default=False,
         help=locale.HELP_CONNECT
@@ -108,6 +111,15 @@ def parse_options():
     opts, args = parser.parse_args()
     opts = _check_conflicted_opts(opts)
     return parser, opts, args
+
+def optional_argument(option, opt_str, value, parser, typ, default_arg):
+    try:
+        next_arg = typ(parser.rargs[0])
+    except Exception:
+        next_arg = default_arg
+    else:
+        parser.rargs.pop(0)
+    setattr(parser.values, option.dest, next_arg)
 
 def _check_conflicted_opts(opts) :
     conflict = False
